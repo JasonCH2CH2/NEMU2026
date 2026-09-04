@@ -93,11 +93,27 @@ static int cmd_x(char *args) {
         return 0;
 }
 
+static int cmd_p(char *args) {
+    if (args == NULL) {
+        printf("请输入一个表达式!\n");
+        return 0;
+    }
+    bool success = true;
+    uint32_t res = expr(args, &success);
+    if (success) {
+        printf("%d\n", res);
+    } else {
+        printf("表达式语法错误!\n");
+    }
+    return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
 	int (*handler) (char *);
-} cmd_table [] = {
+} 
+cmd_table [] = {
 	{ "help", "Display informations about all supported commands", cmd_help },
 	{ "c", "Continue the execution of the program", cmd_c },
 	{ "q", "Exit NEMU", cmd_q },
@@ -106,6 +122,7 @@ static struct {
 	{ "si", "Step one instruction exactly", cmd_si },
         { "info", "info r to print register state", cmd_info },
         { "x", "Scan memory", cmd_x },
+	{ "p", "Evaluate an expression", cmd_p },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
