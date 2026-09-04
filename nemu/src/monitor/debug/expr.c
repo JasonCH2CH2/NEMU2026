@@ -122,7 +122,81 @@ static bool make_token(char *e) {
 
 	return true; 
 }
+// 1. 检查括号是否匹配的函数
+static bool check_parentheses(int p, int q) {
+    if (tokens[p].type != '(' || tokens[q].type != ')') return false;
+    int count = 0;
+    for (int i = p; i <= q; i++) {
+        if (tokens[i].type == '(') count++;
+        else if (tokens[i].type == ')') count--;
+        if (count == 0 && i < q) return false; 
+    }
+    return count == 0;
+}
 
+// 2. 寻找主运算符（最后才运算的那个符号）的函数
+static int dominant_operator(int p, int q) {
+    int op = -1;
+    int level = 0;
+    int min_prec = 100; // 记录最低优先级
+
+    for (int i = p; i <= q; i++) {
+        if (tokens[i].type == '(') level++;
+        else if (tokens[i].type == ')') level--;
+        else if (level == 0) { // 只看括号外面的运算符
+            int prec = 0;
+            if (tokens[i].type == TK_OR) prec = 1;
+            else if (tokens[i].type == TK_AND) prec = 2;
+            else if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) prec = 3;
+            else if (tokens[i].type == '+' || tokens[i].type == '-') prec = 4;
+            else if (tokens[i].type == '*' || tokens[i].type == '/') prec = 5;
+            else continue; // 不是运算符
+
+            // 优先级越小，说明越要在最后算。遇到同级的，选最右边的
+            if (prec <= min_prec) {
+                min_prec = prec;
+                op = i;
+            }
+        }
+    }
+    return op;
+}
+
+// 3. 递归求值的核心函数
+static uint32_t eval(int p, int q) {
+    if (p > q) {
+        return 0; // 表达式有问题
+    }
+    else if (p == q) {
+        
+        uint32_t num = 0;
+        sscanf(tokens[p].str, "%d", &num);
+        return num;
+    }
+    else if (check_parentheses(p, q) == true) {
+        // 被一对括号包围，把皮剥掉，算里面的
+        return eval(p + 1, q - 1);
+    }
+    else {
+        // 找到主运算符的位置
+        int op = dominant_operator(p, q);
+        // 递归算左边和右边
+        uint32_t val1 = eval(p, op - 1);
+        uint32_t val2 = eval(op + 1, q);
+
+        switch (tokens[op].type) {
+            case '+': return val1 + val2;
+            case '-': return val1 - val2;
+            case '*': return val1 * val2;
+            case '/': return val1 / val2;
+            case TK_EQ: return val1 == val2;
+            case TK_NEQ: return val1 != val2;
+            case TK_AND: return val1 && val2;
+            case TK_OR: return val1 || val2;
+            default: return 0;
+        }
+    }
+}
 uint32_t expr(char *e, bool *success) {
 	if(!make_token(e)) {
 		*success = false;
@@ -130,7 +204,7 @@ uint32_t expr(char *e, bool *success) {
 	}
 
 	/* TODO: Insert codes to evaluate the expression. */
-	panic("please implement me");
-	return 0;
+    	*success = true;
+    	return eval(0, nr_token - 1);
 }
 
