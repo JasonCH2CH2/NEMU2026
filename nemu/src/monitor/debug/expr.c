@@ -147,7 +147,7 @@ static int dominant_operator(int p, int q) {
             int prec = 0;
             if (tokens[i].type == TK_OR) prec = 1;
             else if (tokens[i].type == TK_AND) prec = 2;
-            else if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) prec = 3;
+            else if (tokens[i].type == EQ || tokens[i].type == TK_NEQ) prec = 3;
             else if (tokens[i].type == '+' || tokens[i].type == '-') prec = 4;
             else if (tokens[i].type == '*' || tokens[i].type == '/') prec = 5;
             else continue; // 不是运算符
@@ -189,7 +189,7 @@ static uint32_t eval(int p, int q) {
             case '-': return val1 - val2;
             case '*': return val1 * val2;
             case '/': return val1 / val2;
-            case TK_EQ: return val1 == val2;
+            case EQ: return val1 == val2;
             case TK_NEQ: return val1 != val2;
             case TK_AND: return val1 && val2;
             case TK_OR: return val1 || val2;
