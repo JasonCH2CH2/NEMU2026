@@ -7,10 +7,13 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ
+	NOTYPE = 256, EQ,
 
 	/* TODO: Add more token types */
-
+	TK_NUM,   // 代表数字
+  	TK_NEQ,   // 代表不等于 !=
+ 	TK_AND,   // 代表逻辑与 &&
+	TK_OR     // 代表逻辑或 ||
 };
 
 static struct rule {
@@ -24,7 +27,16 @@ static struct rule {
 
 	{" +",	NOTYPE},				// spaces
 	{"\\+", '+'},					// plus
-	{"==", EQ}						// equal
+	{"==", EQ},						// equal
+	{"!=", TK_NEQ},       // 不等于
+  	{"&&", TK_AND},       // 逻辑与
+  	{"\\|\\|", TK_OR},    // 逻辑或
+  	{"\\-", '-'},         // 减号
+  	{"\\*", '*'},         // 乘号
+  	{"/", '/'},           // 除号
+  	{"\\(", '('},         // 左括号
+  	{"\\)", ')'},         // 右括号
+  	{"[0-9]+", TK_NUM}    // 十进制数字 (0到9的连续组合)
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -79,8 +91,24 @@ static bool make_token(char *e) {
 				 */
 
 				switch(rules[i].token_type) {
-					default: panic("please implement me");
-				}
+                                        case NOTYPE:
+                                                // 如果是空格直接跳过
+                                                break;
+                                        default:
+                                                // 记录下这个符号的类型
+                                                tokens[nr_token].type = rules[i].token_type;
+                                                
+                                                // 把数字的字符串记下来
+                                                if (rules[i].token_type == TK_NUM) {
+                                                        // 限制长度
+                                                        int len = substr_len < 32 ? substr_len : 31;
+                                                        strncpy(tokens[nr_token].str, substr_start, len);
+                                                        tokens[nr_token].str[len] = '\0';
+                                                }
+                                                // 记好一个之后，把计数器加 1，准备记下一个
+                                                nr_token++;
+                                                break;
+                                }
 
 				break;
 			}
