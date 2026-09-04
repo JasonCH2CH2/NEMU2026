@@ -38,6 +38,61 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+/* 实现 si 单步执行命令 */
+static int cmd_si(char *args) {
+        int steps = 1;
+        if (args != NULL) {
+                sscanf(args, "%d", &steps);
+        }
+        cpu_exec(steps);
+        return 0;
+}
+
+/* 实现 info 打印寄存器命令 */
+static int cmd_info(char *args) {
+        if (args == NULL) {
+                printf("缺少参数!\n");
+                return 0;
+        }
+        if (strcmp(args, "r") == 0) {
+                printf("eax: 0x%08x\n", cpu.eax);
+                printf("ecx: 0x%08x\n", cpu.ecx);
+                printf("edx: 0x%08x\n", cpu.edx);
+                printf("ebx: 0x%08x\n", cpu.ebx);
+                printf("esp: 0x%08x\n", cpu.esp);
+                printf("ebp: 0x%08x\n", cpu.ebp);
+                printf("esi: 0x%08x\n", cpu.esi);
+                printf("edi: 0x%08x\n", cpu.edi);
+                printf("eip: 0x%08x\n", cpu.eip);
+        }
+        return 0;
+}
+
+/* 实现 x 扫描内存命令 */
+static int cmd_x(char *args) {
+        if (args == NULL) {
+                printf("缺少参数!\n");
+                return 0;
+        }
+        char *n_str = strtok(args, " ");
+        char *addr_str = strtok(NULL, " ");
+        if (n_str == NULL || addr_str == NULL) {
+                printf("缺少参数!\n");
+                return 0;
+        }
+        
+        int n;
+        uint32_t addr;
+        sscanf(n_str, "%d", &n);
+        sscanf(addr_str, "%x", &addr);
+        
+        for (int i = 0; i < n; i++) {
+                uint32_t data = swaddr_read(addr + i * 4, 4);
+                printf("0x%08x:  0x%08x\n", addr + i * 4, data);
+        }
+        return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
@@ -48,7 +103,9 @@ static struct {
 	{ "q", "Exit NEMU", cmd_q },
 
 	/* TODO: Add more commands */
-
+	{ "si", "Step one instruction exactly", cmd_si },
+        { "info", "info r to print register state", cmd_info },
+        { "x", "Scan memory", cmd_x },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
