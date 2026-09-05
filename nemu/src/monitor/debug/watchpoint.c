@@ -49,14 +49,14 @@ void info_wp() {
         return;
     }
     printf("Num\tType\t\tWhat\n");
-    for (WP *p = head; p != NULL; p = p->next) {
+    WP *p; for (p = head; p != NULL; p = p->next) {
         printf("%d\thw watchpoint\t%s\n", p->NO, p->expr);
     }
 }
 
 // 根据编号删除监视点
 void delete_wp(int no) {
-    for (WP *p = head; p != NULL; p = p->next) {
+    WP *p; for (p = head; p != NULL; p = p->next) {
         if (p->NO == no) {
             free_wp(p);
             printf("Watchpoint %d deleted.\n", no);
