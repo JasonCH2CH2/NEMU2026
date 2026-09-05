@@ -13,7 +13,7 @@ enum {
 	TK_NUM,   // 代表数字
   	TK_NEQ,   // 代表不等于 !=
  	TK_AND,   // 代表逻辑与 &&
-	TK_OR     // 代表逻辑或 ||
+	TK_OR,     // 代表逻辑或 ||
 	TK_HEX,  
   	TK_REG
 };
