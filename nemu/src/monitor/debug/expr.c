@@ -108,7 +108,9 @@ static bool make_token(char *e) {
                                                 tokens[nr_token].type = rules[i].token_type;
                                                 
                                                 // 把数字的字符串记下来
-                                                if (rules[i].token_type == TK_NUM|| rules[i].token_type == TK_HEX) {
+                                                if (rules[i].token_type == TK_NUM|| 
+							rules[i].token_type == TK_HEX||
+    							rules[i].token_type == TK_REG) {
                                                         // 限制长度
                                                         int len = substr_len < 32 ? substr_len : 31;
                                                         strncpy(tokens[nr_token].str, substr_start, len);
@@ -205,6 +207,7 @@ static uint32_t eval(int p, int q) {
     else {
         // 找到主运算符的位置
         int op = dominant_operator(p, q);
+	printf("DEBUG: p=%d q=%d op=%d type=%d\n", p, q, op, op >= 0 ? tokens[op].type : -1);
         // 如果没有二元运算符，检查是否是一元 !
     	if (op == -1 && tokens[p].type == TK_NOT) {
         return !eval(p + 1, q);
