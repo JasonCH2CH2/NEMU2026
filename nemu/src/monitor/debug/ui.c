@@ -107,7 +107,16 @@ static int cmd_p(char *args) {
     }
     return 0;
 }
+/* 实现 w 设置监视点命令 */
+static int cmd_w(char *args) {
+    if (args == NULL) {
+        printf("请输入一个表达式!\n");
+        return 0;
+    }
 
+    new_wp(args);
+    return 0;
+}
 static struct {
 	char *name;
 	char *description;
@@ -123,6 +132,7 @@ cmd_table [] = {
         { "info", "info r to print register state", cmd_info },
         { "x", "Scan memory", cmd_x },
 	{ "p", "Evaluate an expression", cmd_p },
+	{ "w", "Set a watchpoint", cmd_w },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
