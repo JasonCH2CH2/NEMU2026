@@ -2,7 +2,7 @@
 
 
 #include "nemu.h"
-
+#include "memory/memory.h"
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
@@ -214,6 +214,9 @@ static uint32_t eval(int p, int q) {
     	}
 	if (op == -1 && tokens[p].type == '-') {
     	return -eval(p + 1, q);
+	}
+	if (op == -1 && tokens[p].type == '*') {
+    	return hwaddr_read(eval(p + 1, q), 4);
 	}
         // 递归算左边和右边
         uint32_t val1 = eval(p, op - 1);
