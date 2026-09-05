@@ -212,6 +212,9 @@ static uint32_t eval(int p, int q) {
     	if (op == -1 && tokens[p].type == TK_NOT) {
         return !eval(p + 1, q);
     	}
+	if (op == -1 && tokens[p].type == '-') {
+    	return -eval(p + 1, q);
+	}
         // 递归算左边和右边
         uint32_t val1 = eval(p, op - 1);
         uint32_t val2 = eval(op + 1, q);
