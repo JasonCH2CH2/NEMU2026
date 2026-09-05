@@ -12,5 +12,5 @@ typedef struct watchpoint {
     	uint32_t old_val;   // 存旧值
 
 } WP;
-
+bool check_watchpoint();
 #endif
