@@ -224,6 +224,7 @@ static uint32_t eval(int p, int q) {
         // 递归算左边和右边
         uint32_t val1 = eval(p, op - 1);
         uint32_t val2 = eval(op + 1, q);
+	printf("DEBUG ADD: val1=%u val2=%u\n", val1, val2);//给测试5加的
 
         switch (tokens[op].type) {
             case '+': return val1 + val2;
