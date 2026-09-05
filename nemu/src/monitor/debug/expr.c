@@ -200,9 +200,23 @@ static uint32_t eval(int p, int q) {
         return eval(p + 1, q - 1);
     }
 
-	else if (tokens[p].type == TK_NOT) {
-    	return !eval(p + 1, q);
-	}
+    else if (tokens[p].type == TK_NOT) {
+    if (p + 1 <= q && tokens[p + 1].type == '(') {
+        int count = 0;
+        int end = p + 1;
+
+        for (; end <= q; end++) {
+            if (tokens[end].type == '(') count++;
+            else if (tokens[end].type == ')') count--;
+
+            if (count == 0) break;
+        }
+
+        return !eval(p + 2, end - 1);
+    }
+
+    return !eval(p + 1, p + 1);
+}
 
     else {
         // 找到主运算符的位置
