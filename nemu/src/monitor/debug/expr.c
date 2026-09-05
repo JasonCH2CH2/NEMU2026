@@ -1,3 +1,6 @@
+
+
+
 #include "nemu.h"
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -14,7 +17,8 @@ enum {
   	TK_NEQ,   // 代表不等于 !=
  	TK_AND,   // 代表逻辑与 &&
 	TK_OR,     // 代表逻辑或 ||
-	TK_HEX,  
+	TK_HEX,
+	TK_NOT,  
   	TK_REG
 };
 
@@ -29,8 +33,9 @@ static struct rule {
 
 	{" +",	NOTYPE},				// spaces
 	{"\\+", '+'},					// plus
-	{"==", EQ},						// equal
+	{"==", EQ},				
 	{"!=", TK_NEQ},       // 不等于
+	{"!", TK_NOT},
   	{"&&", TK_AND},       // 逻辑与
   	{"\\|\\|", TK_OR},    // 逻辑或
   	{"\\-", '-'},         // 减号
@@ -194,6 +199,11 @@ static uint32_t eval(int p, int q) {
         // 被一对括号包围，把皮剥掉，算里面的
         return eval(p + 1, q - 1);
     }
+
+	else if (tokens[p].type == TK_NOT) {
+    	return !eval(p + 1, q);
+	}
+
     else {
         // 找到主运算符的位置
         int op = dominant_operator(p, q);
