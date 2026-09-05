@@ -200,27 +200,15 @@ static uint32_t eval(int p, int q) {
         return eval(p + 1, q - 1);
     }
 
-    else if (tokens[p].type == TK_NOT) {
-    if (p + 1 <= q && tokens[p + 1].type == '(') {
-        int count = 0;
-        int end = p + 1;
-
-        for (; end <= q; end++) {
-            if (tokens[end].type == '(') count++;
-            else if (tokens[end].type == ')') count--;
-
-            if (count == 0) break;
-        }
-
-        return !eval(p + 2, end - 1);
-    }
-
-    return !eval(p + 1, p + 1);
-}
+    
 
     else {
         // 找到主运算符的位置
         int op = dominant_operator(p, q);
+        // 如果没有二元运算符，检查是否是一元 !
+    	if (op == -1 && tokens[p].type == TK_NOT) {
+        return !eval(p + 1, q);
+    	}
         // 递归算左边和右边
         uint32_t val1 = eval(p, op - 1);
         uint32_t val2 = eval(op + 1, q);
