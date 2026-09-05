@@ -219,7 +219,7 @@ static uint32_t eval(int p, int q) {
     	return -eval(p + 1, q);
 	}
 	if (op == -1 && tokens[p].type == '*') {
-    	return hwaddr_read(eval(p + 1, q), 4);
+    	return swaddr_read(eval(p + 1, q), 4);
 	}
         // 递归算左边和右边
         uint32_t val1 = eval(p, op - 1);
