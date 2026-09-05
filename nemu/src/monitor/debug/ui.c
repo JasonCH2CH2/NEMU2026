@@ -114,7 +114,21 @@ static int cmd_w(char *args) {
         return 0;
     }
 
-    new_wp(args);
+     WP *wp = new_wp();
+
+    strncpy(wp->expr, args, sizeof(wp->expr) - 1);
+    wp->expr[sizeof(wp->expr) - 1] = '\0';
+
+    bool success;
+    wp->old_val = expr(args, &success);
+
+    if (!success) {
+        printf("表达式求值失败!\n");
+        free_wp(wp);
+        return 0;
+    }
+
+    printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
     return 0;
 }
 static struct {
