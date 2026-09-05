@@ -27,4 +27,17 @@ WP* new_wp() {
     head = wp;
     return wp;
 }
-
+void free_wp(WP *wp) {
+    if (wp == NULL || head == NULL) return;
+    if (head == wp) {
+        head = head->next;
+    } else {
+        WP *curr = head;
+        while (curr->next != NULL && curr->next != wp) {
+            curr = curr->next;
+        }
+        if (curr->next == wp) curr->next = wp->next;
+    }
+    wp->next = free_;
+    free_ = wp;
+}
