@@ -210,7 +210,6 @@ static uint32_t eval(int p, int q) {
     else {
         // 找到主运算符的位置
         int op = dominant_operator(p, q);
-	printf("DEBUG: p=%d q=%d op=%d type=%d\n", p, q, op, op >= 0 ? tokens[op].type : -1);
         // 如果没有二元运算符，检查是否是一元 !
     	if (op == -1 && tokens[p].type == TK_NOT) {
         return !eval(p + 1, q);
@@ -224,7 +223,6 @@ static uint32_t eval(int p, int q) {
         // 递归算左边和右边
         uint32_t val1 = eval(p, op - 1);
         uint32_t val2 = eval(op + 1, q);
-	printf("DEBUG ADD: val1=%u val2=%u\n", val1, val2);//给测试5加的
 
         switch (tokens[op].type) {
             case '+': return val1 + val2;
