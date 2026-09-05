@@ -160,7 +160,10 @@ static int dominant_operator(int p, int q) {
             else if (tokens[i].type == TK_AND) prec = 2;
             else if (tokens[i].type == EQ || tokens[i].type == TK_NEQ) prec = 3;
             else if (tokens[i].type == '+' || tokens[i].type == '-') prec = 4;
-            else if (tokens[i].type == '*' || tokens[i].type == '/') prec = 5;
+            else if (tokens[i].type == '*' || tokens[i].type == '/'){
+    		if (i == p) continue;
+    		prec = 5;
+		}
             else continue; // 不是运算符
 
             // 优先级越小，说明越要在最后算。遇到同级的，选最右边的
