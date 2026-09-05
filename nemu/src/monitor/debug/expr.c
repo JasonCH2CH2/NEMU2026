@@ -14,6 +14,8 @@ enum {
   	TK_NEQ,   // 代表不等于 !=
  	TK_AND,   // 代表逻辑与 &&
 	TK_OR     // 代表逻辑或 ||
+	TK_HEX,  
+  	TK_REG
 };
 
 static struct rule {
@@ -36,6 +38,8 @@ static struct rule {
   	{"/", '/'},           // 除号
   	{"\\(", '('},         // 左括号
   	{"\\)", ')'},         // 右括号
+	{"0x[0-9a-fA-F]+", TK_HEX}, //任务5
+  	{"\\$[a-zA-Z]+", TK_REG},//十六进制在十进制前面
   	{"[0-9]+", TK_NUM}    // 十进制数字 (0到9的连续组合)
 };
 
@@ -168,10 +172,23 @@ static uint32_t eval(int p, int q) {
         return 0; // 表达式有问题
     }
     else if (p == q) {
-        
-        uint32_t num = 0;
-        sscanf(tokens[p].str, "%d", &num);
-        return num;
+	uint32_t val = 0;
+        if (tokens[p].type == TK_NUM) {
+            sscanf(tokens[p].str, "%d", &val);
+        } else if (tokens[p].type == TK_HEX) {
+            sscanf(tokens[p].str, "%x", &val);
+        } else if (tokens[p].type == TK_REG) {
+            if (strcmp(tokens[p].str, "$eax") == 0) val = cpu.eax;
+            else if (strcmp(tokens[p].str, "$ecx") == 0) val = cpu.ecx;
+            else if (strcmp(tokens[p].str, "$edx") == 0) val = cpu.edx;
+            else if (strcmp(tokens[p].str, "$ebx") == 0) val = cpu.ebx;
+            else if (strcmp(tokens[p].str, "$esp") == 0) val = cpu.esp;
+            else if (strcmp(tokens[p].str, "$ebp") == 0) val = cpu.ebp;
+            else if (strcmp(tokens[p].str, "$esi") == 0) val = cpu.esi;
+            else if (strcmp(tokens[p].str, "$edi") == 0) val = cpu.edi;
+            else if (strcmp(tokens[p].str, "$eip") == 0) val = cpu.eip;
+        }
+        return val;
     }
     else if (check_parentheses(p, q) == true) {
         // 被一对括号包围，把皮剥掉，算里面的
