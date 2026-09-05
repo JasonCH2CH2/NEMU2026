@@ -103,7 +103,7 @@ static bool make_token(char *e) {
                                                 tokens[nr_token].type = rules[i].token_type;
                                                 
                                                 // 把数字的字符串记下来
-                                                if (rules[i].token_type == TK_NUM) {
+                                                if (rules[i].token_type == TK_NUM|| rules[i].token_type == TK_HEX) {
                                                         // 限制长度
                                                         int len = substr_len < 32 ? substr_len : 31;
                                                         strncpy(tokens[nr_token].str, substr_start, len);
