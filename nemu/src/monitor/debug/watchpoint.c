@@ -79,3 +79,33 @@ void free_wp(int NO) {
 }
 
 
+bool check_wp() {
+    WP *wp = head;
+
+    while (wp != NULL) {
+        bool success;
+        uint32_t new_value;
+
+        new_value = expr(wp->expr, &success);
+
+        if (!success) {
+            printf("Bad expression in watchpoint %d.\n", wp->NO);
+            wp = wp->next;
+            continue;
+        }
+
+        if (new_value != wp->old_value) {
+            printf("Watchpoint %d triggered: %s\n", wp->NO, wp->expr);
+            printf("Old value = 0x%08x\n", wp->old_value);
+            printf("New value = 0x%08x\n", new_value);
+
+            wp->old_value = new_value;
+            return true;
+        }
+
+        wp = wp->next;
+    }
+
+    return false;
+}
+
