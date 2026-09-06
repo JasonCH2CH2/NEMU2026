@@ -83,16 +83,6 @@ static int cmd_x(char *args) {
         expr_str++;
     }
 
-    expr_str = strchr(expr_str, ' ');
-    if (expr_str == NULL) {
-        printf("Usage: x N EXPR\n");
-        return 0;
-    }
-
-    while (*expr_str == ' ') {
-        expr_str++;
-    }
-
     addr = expr(expr_str, &success);
 
     if (!success) {
@@ -108,7 +98,6 @@ static int cmd_x(char *args) {
 
     return 0;
 }
-
 static int cmd_q(char *args) {
 	return -1;
 }
