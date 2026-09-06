@@ -290,6 +290,10 @@ static uint32_t eval(int p, int q, bool *success) {
 
     // 没找到二元运算符，说明可能是一元运算
     if (op == -1) {
+
+        printf("DEBUG: p=%d q=%d token=%d str=%s\n",
+       p, q, tokens[p].type, tokens[p].str);
+       
         // !
         if (tokens[p].type == NOT) {
             uint32_t val = eval(p + 1, q, success);
