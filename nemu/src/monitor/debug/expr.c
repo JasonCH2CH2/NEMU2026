@@ -213,6 +213,9 @@ static bool check_parentheses(int p, int q) {
 static uint32_t eval(int p, int q, bool *success) {
     // 只有一个 token
     if (p == q) {
+        //自己加的
+            printf("DEBUG SINGLE: p=%d q=%d token=%d str=%s\n",
+           p, q, tokens[p].type, tokens[p].str);
         if (tokens[p].type == NUM) {
             return strtoul(tokens[p].str, NULL, 10);
         }
