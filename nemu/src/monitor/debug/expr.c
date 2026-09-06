@@ -135,6 +135,20 @@ static bool make_token(char *e) {
 
 					nr_token++;
 
+					if (tokens[nr_token - 1].type == '*' &&
+					(nr_token == 1 ||
+					tokens[nr_token - 2].type == '(' ||
+					tokens[nr_token - 2].type == '+' ||
+					tokens[nr_token - 2].type == '-' ||
+					tokens[nr_token - 2].type == '*' ||
+					tokens[nr_token - 2].type == '/' ||
+					tokens[nr_token - 2].type == EQ ||
+					tokens[nr_token - 2].type == NEQ ||
+					tokens[nr_token - 2].type == AND ||
+					tokens[nr_token - 2].type == NOT)) {
+					tokens[nr_token - 1].type = DEREF;
+					}
+
 					if (tokens[nr_token - 1].type == '-' &&
 						(nr_token == 1 ||
 						tokens[nr_token - 2].type == '(' ||
