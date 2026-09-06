@@ -227,6 +227,10 @@ static uint32_t eval(int p, int q, bool *success) {
         if (tokens[p].type == REG) {
             int i;
 
+        if (strcmp(tokens[p].str + 1, "eip") == 0) {
+        return cpu.eip;
+        }
+        
             for (i = R_EAX; i <= R_EDI; i++) {
                 if (strcmp(tokens[p].str + 1, regsl[i]) == 0) {
                     return reg_l(i);
