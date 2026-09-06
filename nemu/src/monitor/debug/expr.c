@@ -292,6 +292,13 @@ static uint32_t eval(int p, int q, bool *success) {
     // 没找到二元运算符，说明可能是一元运算
     if (op == -1) {
 
+
+
+
+
+
+
+        //自己加的
         printf("DEBUG: p=%d q=%d token=%d str=%s\n",
        p, q, tokens[p].type, tokens[p].str);
 
@@ -320,6 +327,13 @@ static uint32_t eval(int p, int q, bool *success) {
         // 解引用
         if (tokens[p].type == DEREF) {
             uint32_t addr = eval(p + 1, q, success);
+
+            
+            
+            
+            //自己加的
+            printf("DEBUG DEREF: p=%d q=%d addr=0x%08x success=%d\n",
+       p, q, addr, *success);
 
             if (!*success) {
                 return 0;
