@@ -59,6 +59,27 @@ static int cmd_info(char *args) {
     return 0;
 }
 
+static int cmd_p(char *args) {
+    bool success;
+    uint32_t value;
+
+    if (args == NULL) {
+        printf("Usage: p EXPR\n");
+        return 0;
+    }
+
+    value = expr(args, &success);
+
+    if (!success) {
+        printf("Bad expression.\n");
+        return 0;
+    }
+
+    printf("0x%08x\n", value);
+
+    return 0;
+}
+
 static int cmd_x(char *args) {
     int n;
     char *expr_str;
@@ -104,7 +125,14 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
-static struct {//注册表在这
+
+
+
+
+
+
+//注册表在这
+static struct {
 	char *name;
 	char *description;
 	int (*handler) (char *);
@@ -115,6 +143,7 @@ static struct {//注册表在这
 	{ "si", "Step into N instructions", cmd_si },
 	{ "info", "Print information about the program", cmd_info },
 	{ "x", "Scan memory", cmd_x },
+	{ "p", "Evaluate expression", cmd_p },
 
 	/* TODO: Add more commands */
 
