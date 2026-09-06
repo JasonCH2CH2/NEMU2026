@@ -98,38 +98,39 @@ static bool make_token(char *e) {
 				 * of tokens, some extra actions should be performed.
 				 */
 
-				 printf("DEBUG: token_type = %d, HEX = %d\n", rules[i].token_type, HEX);
+				
 				switch(rules[i].token_type) {
-				    case NOTYPE:
-        			break;
+    case NOTYPE:
+        break;
 
-    				case NUM:
-					case HEX:
-					case REG:
-					case EQ:
-					case NEQ:
-					case AND:
-					case '+':
-					case '-':
-					case '*':
-					case '/':
-					case '(':
-					case ')':
-        			tokens[nr_token].type = rules[i].token_type;
+    case NUM:
+    case HEX:
+    case REG:
+    case EQ:
+    case NEQ:
+    case AND:
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '(':
+    case ')':
+        tokens[nr_token].type = rules[i].token_type;
 
-					if (substr_len >= sizeof(tokens[nr_token].str)) {
-						printf("token too long\n");
-						return false;
-					}
+        if (substr_len >= sizeof(tokens[nr_token].str)) {
+            printf("token too long\n");
+            return false;
+        }
 
-					strncpy(tokens[nr_token].str, substr_start, substr_len);
-					tokens[nr_token].str[substr_len] = '\0';
+        strncpy(tokens[nr_token].str, substr_start, substr_len);
+        tokens[nr_token].str[substr_len] = '\0';
 
-					nr_token++;
-					break;
+        nr_token++;
+        break;
 
-					default: panic("please implement me");
-				}
+    default:
+        panic("please implement me");
+}
 
 				break;
 			}
