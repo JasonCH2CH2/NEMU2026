@@ -53,4 +53,29 @@ WP* new_wp(char *expr_str) {
     return wp;
 }
 
+void free_wp(int NO) {
+    WP *prev = NULL;
+    WP *cur = head;
+
+    while (cur != NULL) {
+        if (cur->NO == NO) {
+            if (prev == NULL) {
+                head = cur->next;
+            } else {
+                prev->next = cur->next;
+            }
+
+            cur->next = free_;
+            free_ = cur;
+
+            return;
+        }
+
+        prev = cur;
+        cur = cur->next;
+    }
+
+    printf("Watchpoint %d not found.\n", NO);
+}
+
 
