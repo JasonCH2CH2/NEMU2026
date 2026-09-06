@@ -15,7 +15,9 @@ enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
  */
 
 typedef struct {
-     struct {
+
+union{
+     union {
 		uint32_t _32;
 		uint16_t _16;
 		uint8_t _8[2];
@@ -24,7 +26,7 @@ typedef struct {
      /* Do NOT change the order of the GPRs' definitions. */
 
      uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
-
+};
      swaddr_t eip;
      
      union {
