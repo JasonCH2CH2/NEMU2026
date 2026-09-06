@@ -109,3 +109,13 @@ bool check_wp() {
     return false;
 }
 
+void print_wp() {
+    WP *wp = head;
+
+    while (wp != NULL) {
+        printf("Watchpoint %d: %s = 0x%08x\n",
+               wp->NO, wp->expr, wp->old_value);
+        wp = wp->next;
+    }
+}
+

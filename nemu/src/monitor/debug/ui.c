@@ -56,6 +56,10 @@ static int cmd_info(char *args) {
         }
     }
 
+	if (strcmp(args, "w") == 0) {
+    print_wp();
+	}
+
     return 0;
 }
 
