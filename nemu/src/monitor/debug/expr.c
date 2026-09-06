@@ -213,9 +213,7 @@ static bool check_parentheses(int p, int q) {
 static uint32_t eval(int p, int q, bool *success) {
     // 只有一个 token
     if (p == q) {
-        //自己加的
-            printf("DEBUG SINGLE: p=%d q=%d token=%d str=%s\n",
-           p, q, tokens[p].type, tokens[p].str);
+
         if (tokens[p].type == NUM) {
             return strtoul(tokens[p].str, NULL, 10);
         }
@@ -249,9 +247,7 @@ static uint32_t eval(int p, int q, bool *success) {
     if (check_parentheses(p, q)) {
 
 
-            ///自己加的
-            printf("DEBUG PAREN: p=%d q=%d -> inner p=%d q=%d\n",
-           p, q, p + 1, q - 1);
+
         return eval(p + 1, q - 1, success);
     }
 
@@ -308,15 +304,6 @@ static uint32_t eval(int p, int q, bool *success) {
     if (op == -1) {
 
 
-
-
-
-
-
-        //自己加的
-        printf("DEBUG: p=%d q=%d token=%d str=%s\n",
-       p, q, tokens[p].type, tokens[p].str);
-
         // !
         if (tokens[p].type == NOT) {
             uint32_t val = eval(p + 1, q, success);
@@ -343,12 +330,7 @@ static uint32_t eval(int p, int q, bool *success) {
         if (tokens[p].type == DEREF) {
             uint32_t addr = eval(p + 1, q, success);
 
-            
-            
-            
-            //自己加的
-            printf("DEBUG DEREF: p=%d q=%d addr=0x%08x success=%d\n",
-       p, q, addr, *success);
+
 
             if (!*success) {
                 return 0;
