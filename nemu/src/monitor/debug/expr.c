@@ -307,6 +307,16 @@ if (op == -1) {
     return -val;
     }
 
+	if (tokens[p].type == DEREF) {
+    uint32_t addr = eval(p + 1, q, success);
+
+    if (!*success) {
+        return 0;
+    }
+
+    return swaddr_read(addr, 4);
+}
+
     *success = false;
     return 0;
 }
