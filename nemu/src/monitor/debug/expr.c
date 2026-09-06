@@ -221,10 +221,17 @@ static uint32_t eval(int p, int q, bool *success) {
         } else if (tokens[i].type == ')') {
             balance--;
         } else if (balance == 0) {
-		if (tokens[i].type == '+' ||
+
+			if (tokens[i].type == EQ ||
+    		tokens[i].type == NEQ) {
+
+    		op = i;
+			}
+			else if (tokens[i].type == '+' ||
 			tokens[i].type == '-') {
 			op = i;
-		} else if (tokens[i].type == '*' ||
+			} 
+			else if (tokens[i].type == '*' ||
 				tokens[i].type == '/') {
 			if (op == -1) {
 				op = i;
@@ -248,7 +255,8 @@ static uint32_t eval(int p, int q, bool *success) {
     if (!*success) {
         return 0;
     }
-
+	if (tokens[op].type == EQ) return val1 == val2;
+	if (tokens[op].type == NEQ) return val1 != val2;
     if (tokens[op].type == '+') {
         return val1 + val2;
     }
