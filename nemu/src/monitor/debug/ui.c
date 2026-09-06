@@ -123,6 +123,16 @@ static int cmd_q(char *args) {
 	return -1;
 }
 
+static int cmd_w(char *args) {
+    if (args == NULL) {
+        printf("Usage: w EXPR\n");
+        return 0;
+    }
+
+    new_wp(args);
+    return 0;
+}
+
 static int cmd_help(char *args);
 
 
@@ -144,6 +154,8 @@ static struct {
 	{ "info", "Print information about the program", cmd_info },
 	{ "x", "Scan memory", cmd_x },
 	{ "p", "Evaluate expression", cmd_p },
+	{ "w", "Set a watchpoint", cmd_w },
+	
 
 	/* TODO: Add more commands */
 
