@@ -230,7 +230,7 @@ static uint32_t eval(int p, int q, bool *success) {
         if (strcmp(tokens[p].str + 1, "eip") == 0) {
         return cpu.eip;
         }
-        
+
             for (i = R_EAX; i <= R_EDI; i++) {
                 if (strcmp(tokens[p].str + 1, regsl[i]) == 0) {
                     return reg_l(i);
@@ -299,6 +299,9 @@ static uint32_t eval(int p, int q, bool *success) {
             lowest_prec = prec;
             op = i;
         }
+
+        printf("DEBUG OP: p=%d q=%d i=%d type=%d prec=%d op=%d\n",
+       p, q, i, tokens[i].type, prec, op);
     }
 
     // 没找到二元运算符，说明可能是一元运算
