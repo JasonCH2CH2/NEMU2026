@@ -145,7 +145,8 @@ static bool make_token(char *e) {
 					tokens[nr_token - 2].type == EQ ||
 					tokens[nr_token - 2].type == NEQ ||
 					tokens[nr_token - 2].type == AND ||
-					tokens[nr_token - 2].type == NOT)) {
+					tokens[nr_token - 2].type == NOT ||
+                    tokens[nr_token - 2].type == NEG)) {
 					tokens[nr_token - 1].type = DEREF;
 					}
 
@@ -293,7 +294,7 @@ static uint32_t eval(int p, int q, bool *success) {
 
         printf("DEBUG: p=%d q=%d token=%d str=%s\n",
        p, q, tokens[p].type, tokens[p].str);
-       
+
         // !
         if (tokens[p].type == NOT) {
             uint32_t val = eval(p + 1, q, success);
