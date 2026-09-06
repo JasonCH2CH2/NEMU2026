@@ -7,10 +7,15 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ
+	NOTYPE = 256, 
+	EQ,
 
 	/* TODO: Add more token types */
-
+    NEQ,
+    AND,
+    NUM,
+    HEX,
+    REG
 };
 
 static struct rule {
@@ -22,9 +27,23 @@ static struct rule {
 	 * Pay attention to the precedence level of different rules.
 	 */
 
-	{" +",	NOTYPE},				// spaces
-	{"\\+", '+'},					// plus
-	{"==", EQ}						// equal
+ {" +", NOTYPE},
+
+    {"0[xX][0-9a-fA-F]+", HEX},
+    {"\\$[a-zA-Z]+", REG},
+    {"[0-9]+", NUM},
+
+    {"==", EQ},
+    {"!=", NEQ},
+    {"&&", AND},
+
+    {"\\+", '+'},
+    {"-", '-'},
+    {"\\*", '*'},
+    {"/", '/'},
+
+    {"\\(", '('},
+    {"\\)", ')'}
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -79,6 +98,34 @@ static bool make_token(char *e) {
 				 */
 
 				switch(rules[i].token_type) {
+				    case NOTYPE:
+        			break;
+
+    				case NUM:
+					case HEX:
+					case REG:
+					case EQ:
+					case NEQ:
+					case AND:
+					case '+':
+					case '-':
+					case '*':
+					case '/':
+					case '(':
+					case ')':
+        			tokens[nr_token].type = rules[i].token_type;
+
+					if (substr_len >= sizeof(tokens[nr_token].str)) {
+						printf("token too long\n");
+						return false;
+					}
+
+					strncpy(tokens[nr_token].str, substr_start, substr_len);
+					tokens[nr_token].str[substr_len] = '\0';
+
+					nr_token++;
+					break;
+
 					default: panic("please implement me");
 				}
 
