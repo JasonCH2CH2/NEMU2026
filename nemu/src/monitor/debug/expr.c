@@ -98,6 +98,7 @@ static bool make_token(char *e) {
 				 * of tokens, some extra actions should be performed.
 				 */
 
+				 printf("DEBUG: token_type = %d, HEX = %d\n", rules[i].token_type, HEX);
 				switch(rules[i].token_type) {
 				    case NOTYPE:
         			break;
