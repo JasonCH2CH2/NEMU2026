@@ -154,6 +154,19 @@ uint32_t expr(char *e, bool *success) {
 
 	/* TODO: Insert codes to evaluate the expression. */
 	    if (nr_token == 1) {
+			if (tokens[0].type == REG) {
+			int i;
+
+			for (i = R_EAX; i <= R_EDI; i++) {
+				if (strcmp(tokens[0].str + 1, regsl[i]) == 0) {
+					*success = true;
+					return reg_l(i);
+				}
+			}
+
+			*success = false;
+			return 0;
+		}
         if (tokens[0].type == HEX) {
             *success = true;
             return strtoul(tokens[0].str, NULL, 16);
