@@ -275,25 +275,25 @@ static uint32_t eval(int p, int q, bool *success) {
              tokens[i].type == '-') {
         prec = 3;
     }
-	else if (tokens[i].type == '*' ||
+else if (tokens[i].type == '*' ||
          tokens[i].type == '/') {
-    if (tokens[i].type == '*' &&
-        (i == p ||
-         tokens[i - 1].type == '(' ||
-         tokens[i - 1].type == '+' ||
-         tokens[i - 1].type == '-' ||
-         tokens[i - 1].type == '*' ||
-         tokens[i - 1].type == '/' ||
-         tokens[i - 1].type == EQ ||
-         tokens[i - 1].type == NEQ ||
-         tokens[i - 1].type == AND ||
-         tokens[i - 1].type == NOT ||
-         tokens[i - 1].type == NEG)) {
-        continue;
-				}
+   if (tokens[nr_token - 1].type == '*' &&
+    (nr_token == 1 ||
+     tokens[nr_token - 2].type == '(' ||
+     tokens[nr_token - 2].type == '+' ||
+     tokens[nr_token - 2].type == '-' ||
+     tokens[nr_token - 2].type == '*' ||
+     tokens[nr_token - 2].type == '/' ||
+     tokens[nr_token - 2].type == EQ ||
+     tokens[nr_token - 2].type == NEQ ||
+     tokens[nr_token - 2].type == AND ||
+     tokens[nr_token - 2].type == NOT ||
+     tokens[nr_token - 2].type == NEG)) {
+    tokens[nr_token - 1].type = DEREF;
+}
 
-				prec = 4;
-			}
+    prec = 4;
+}
 
     if (prec != -1 && prec <= lowest_prec) {
         lowest_prec = prec;
