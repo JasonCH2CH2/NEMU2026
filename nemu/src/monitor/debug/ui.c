@@ -137,6 +137,16 @@ static int cmd_w(char *args) {
     return 0;
 }
 
+static int cmd_d(char *args) {
+    if (args == NULL) {
+        printf("Usage: d N\n");
+        return 0;
+    }
+
+    free_wp(atoi(args));
+    return 0;
+}
+
 static int cmd_help(char *args);
 
 
@@ -159,6 +169,7 @@ static struct {
 	{ "x", "Scan memory", cmd_x },
 	{ "p", "Evaluate expression", cmd_p },
 	{ "w", "Set a watchpoint", cmd_w },
+	{ "d", "Delete a watchpoint", cmd_d },
 	
 
 	/* TODO: Add more commands */
