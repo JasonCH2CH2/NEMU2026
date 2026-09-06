@@ -240,6 +240,11 @@ static uint32_t eval(int p, int q, bool *success) {
 
     // 如果整个表达式被一对括号包围
     if (check_parentheses(p, q)) {
+
+
+            ///自己加的
+            printf("DEBUG PAREN: p=%d q=%d -> inner p=%d q=%d\n",
+           p, q, p + 1, q - 1);
         return eval(p + 1, q - 1, success);
     }
 
