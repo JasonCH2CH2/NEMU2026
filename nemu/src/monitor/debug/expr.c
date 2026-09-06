@@ -159,7 +159,8 @@ static bool make_token(char *e) {
 						tokens[nr_token - 2].type == EQ ||
 						tokens[nr_token - 2].type == NEQ ||
 						tokens[nr_token - 2].type == AND ||
-						tokens[nr_token - 2].type == NOT)) {
+						tokens[nr_token - 2].type == NOT ||
+						tokens[nr_token - 2].type == NEG)) {
 						tokens[nr_token - 1].type = NEG;
 					}
 
