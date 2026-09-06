@@ -236,118 +236,123 @@ static uint32_t eval(int p, int q, bool *success) {
         return 0;
     }
 
-    // 整个表达式被一对括号包住
+    // 如果整个表达式被一对括号包围
     if (check_parentheses(p, q)) {
         return eval(p + 1, q - 1, success);
     }
 
-    // 找主运算符
     int op = -1;
     int balance = 0;
     int i;
-	int lowest_prec = 100;
+    int lowest_prec = 100;
 
-   for (i = p; i <= q; i++) {
-    int prec = -1;
+    // 寻找主运算符
+    for (i = p; i <= q; i++) {
+        int prec = -1;
 
-    if (tokens[i].type == '(') {
-        balance++;
-        continue;
-    }
-
-    if (tokens[i].type == ')') {
-        balance--;
-        continue;
-    }
-
-    if (balance != 0) {
-        continue;
-    }
-
-    if (tokens[i].type == AND) {
-        prec = 1;
-    }
-    else if (tokens[i].type == EQ ||
-             tokens[i].type == NEQ) {
-        prec = 2;
-    }
-    else if (tokens[i].type == '+' ||
-             tokens[i].type == '-') {
-        prec = 3;
-    }
-else if (tokens[i].type == '*' ||
-         tokens[i].type == '/') {
-   if (tokens[nr_token - 1].type == '*' &&
-    (nr_token == 1 ||
-     tokens[nr_token - 2].type == '(' ||
-     tokens[nr_token - 2].type == '+' ||
-     tokens[nr_token - 2].type == '-' ||
-     tokens[nr_token - 2].type == '*' ||
-     tokens[nr_token - 2].type == '/' ||
-     tokens[nr_token - 2].type == EQ ||
-     tokens[nr_token - 2].type == NEQ ||
-     tokens[nr_token - 2].type == AND ||
-     tokens[nr_token - 2].type == NOT ||
-     tokens[nr_token - 2].type == NEG)) {
-    tokens[nr_token - 1].type = DEREF;
-}
-
-    prec = 4;
-}
-
-    if (prec != -1 && prec <= lowest_prec) {
-        lowest_prec = prec;
-        op = i;
-    }
-}
-
-if (op == -1) {
-    if (tokens[p].type == NOT) {
-        uint32_t val = eval(p + 1, q, success);
-
-        if (!*success) {
-            return 0;
+        if (tokens[i].type == '(') {
+            balance++;
+            continue;
         }
 
-        return !val;
+        if (tokens[i].type == ')') {
+            balance--;
+            continue;
+        }
+
+        // 括号内部的运算符不是当前层的主运算符
+        if (balance != 0) {
+            continue;
+        }
+
+        if (tokens[i].type == AND) {
+            prec = 1;
+        }
+        else if (tokens[i].type == EQ ||
+                 tokens[i].type == NEQ) {
+            prec = 2;
+        }
+        else if (tokens[i].type == '+' ||
+                 tokens[i].type == '-') {
+            prec = 3;
+        }
+        else if (tokens[i].type == '*' ||
+                 tokens[i].type == '/') {
+            prec = 4;
+        }
+
+        if (prec != -1 && prec <= lowest_prec) {
+            lowest_prec = prec;
+            op = i;
+        }
     }
 
-	if (tokens[p].type == NEG) {
-        uint32_t val = eval(p + 1, q, success);
+    // 没找到二元运算符，说明可能是一元运算
+    if (op == -1) {
+        // !
+        if (tokens[p].type == NOT) {
+            uint32_t val = eval(p + 1, q, success);
 
-    if (!*success) {
-            return 0;
-    }
+            if (!*success) {
+                return 0;
+            }
 
-    return -val;
-    }
+            return !val;
+        }
 
-	if (tokens[p].type == DEREF) {
-    uint32_t addr = eval(p + 1, q, success);
+        // 负号
+        if (tokens[p].type == NEG) {
+            uint32_t val = eval(p + 1, q, success);
 
-    if (!*success) {
+            if (!*success) {
+                return 0;
+            }
+
+            return -val;
+        }
+
+        // 解引用
+        if (tokens[p].type == DEREF) {
+            uint32_t addr = eval(p + 1, q, success);
+
+            if (!*success) {
+                return 0;
+            }
+
+            return swaddr_read(addr, 4);
+        }
+
+        *success = false;
         return 0;
     }
 
-    return swaddr_read(addr, 4);
-}
-
-    *success = false;
-    return 0;
-}
-
+    // 计算左操作数
     uint32_t val1 = eval(p, op - 1, success);
+
     if (!*success) {
         return 0;
     }
 
+    // 计算右操作数
     uint32_t val2 = eval(op + 1, q, success);
+
     if (!*success) {
         return 0;
     }
-	if (tokens[op].type == AND) return (val1 != 0) && (val2 != 0);
-	if (tokens[op].type == EQ) return val1 == val2;
-	if (tokens[op].type == NEQ) return val1 != val2;
+
+    // 执行运算
+    if (tokens[op].type == AND) {
+        return (val1 != 0) && (val2 != 0);
+    }
+
+    if (tokens[op].type == EQ) {
+        return val1 == val2;
+    }
+
+    if (tokens[op].type == NEQ) {
+        return val1 != val2;
+    }
+
     if (tokens[op].type == '+') {
         return val1 + val2;
     }
@@ -356,23 +361,22 @@ if (op == -1) {
         return val1 - val2;
     }
 
-	if (tokens[op].type == '*') {
-    return val1 * val2;
-	}
+    if (tokens[op].type == '*') {
+        return val1 * val2;
+    }
 
-	if (tokens[op].type == '/') {
-		if (val2 == 0) {
-			*success = false;
-			return 0;
-		}
+    if (tokens[op].type == '/') {
+        if (val2 == 0) {
+            *success = false;
+            return 0;
+        }
 
-		return val1 / val2;
-	}
+        return val1 / val2;
+    }
 
     *success = false;
     return 0;
 }
-
 uint32_t expr(char *e, bool *success) {
     if (!make_token(e)) {
         *success = false;
