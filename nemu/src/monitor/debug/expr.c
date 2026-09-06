@@ -214,35 +214,46 @@ static uint32_t eval(int p, int q, bool *success) {
     int op = -1;
     int balance = 0;
     int i;
+	int lowest_prec = 100;
 
-    for (i = p; i <= q; i++) {
-        if (tokens[i].type == '(') {
-            balance++;
-        } else if (tokens[i].type == ')') {
-            balance--;
-        } else if (balance == 0) {
-			if (tokens[i].type == AND) {
+   for (i = p; i <= q; i++) {
+    int prec = -1;
 
-				op = i;
-
-			} 
-			else if (tokens[i].type == EQ ||
-    		tokens[i].type == NEQ) {
-
-    		op = i;
-			}
-			else if (tokens[i].type == '+' ||
-			tokens[i].type == '-') {
-			op = i;
-			} 
-			else if (tokens[i].type == '*' ||
-				tokens[i].type == '/') {
-			if (op == -1) {
-				op = i;
-			}
-		}
-        }
+    if (tokens[i].type == '(') {
+        balance++;
+        continue;
     }
+
+    if (tokens[i].type == ')') {
+        balance--;
+        continue;
+    }
+
+    if (balance != 0) {
+        continue;
+    }
+
+    if (tokens[i].type == AND) {
+        prec = 1;
+    }
+    else if (tokens[i].type == EQ ||
+             tokens[i].type == NEQ) {
+        prec = 2;
+    }
+    else if (tokens[i].type == '+' ||
+             tokens[i].type == '-') {
+        prec = 3;
+    }
+    else if (tokens[i].type == '*' ||
+             tokens[i].type == '/') {
+        prec = 4;
+    }
+
+    if (prec != -1 && prec <= lowest_prec) {
+        lowest_prec = prec;
+        op = i;
+    }
+}
 
     // 没找到 + 或 -
     if (op == -1) {
