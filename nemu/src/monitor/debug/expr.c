@@ -283,6 +283,16 @@ if (op == -1) {
         return !val;
     }
 
+	if (tokens[p].type == NEG) {
+        uint32_t val = eval(p + 1, q, success);
+
+    if (!*success) {
+            return 0;
+    }
+
+    return -val;
+    }
+
     *success = false;
     return 0;
 }
