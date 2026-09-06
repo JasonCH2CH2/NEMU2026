@@ -17,7 +17,10 @@ enum {
     AND,
     NUM,
     HEX,
-    REG
+    REG,
+    NOT,
+    NEG,
+    DEREF
 };
 
 static struct rule {
@@ -38,6 +41,7 @@ static struct rule {
     {"==", EQ},
     {"!=", NEQ},
     {"&&", AND},
+	{"!", NOT},
 
     {"\\+", '+'},
     {"-", '-'},
@@ -110,6 +114,7 @@ static bool make_token(char *e) {
 				case EQ:
 				case NEQ:
 				case AND:
+				case NOT:
 				case '+':
 				case '-':
 				case '*':
