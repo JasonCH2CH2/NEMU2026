@@ -275,10 +275,25 @@ static uint32_t eval(int p, int q, bool *success) {
              tokens[i].type == '-') {
         prec = 3;
     }
-    else if (tokens[i].type == '*' ||
-             tokens[i].type == '/') {
-        prec = 4;
-    }
+	else if (tokens[i].type == '*' ||
+         tokens[i].type == '/') {
+    if (tokens[i].type == '*' &&
+        (i == p ||
+         tokens[i - 1].type == '(' ||
+         tokens[i - 1].type == '+' ||
+         tokens[i - 1].type == '-' ||
+         tokens[i - 1].type == '*' ||
+         tokens[i - 1].type == '/' ||
+         tokens[i - 1].type == EQ ||
+         tokens[i - 1].type == NEQ ||
+         tokens[i - 1].type == AND ||
+         tokens[i - 1].type == NOT ||
+         tokens[i - 1].type == NEG)) {
+        continue;
+				}
+
+				prec = 4;
+			}
 
     if (prec != -1 && prec <= lowest_prec) {
         lowest_prec = prec;
