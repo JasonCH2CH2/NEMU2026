@@ -257,11 +257,20 @@ static uint32_t eval(int p, int q, bool *success) {
     }
 }
 
-    // 没找到 + 或 -
-    if (op == -1) {
-        *success = false;
-        return 0;
+if (op == -1) {
+    if (tokens[p].type == NOT) {
+        uint32_t val = eval(p + 1, q, success);
+
+        if (!*success) {
+            return 0;
+        }
+
+        return !val;
     }
+
+    *success = false;
+    return 0;
+}
 
     uint32_t val1 = eval(p, op - 1, success);
     if (!*success) {
