@@ -146,39 +146,124 @@ static bool make_token(char *e) {
 	return true; 
 }
 
-uint32_t expr(char *e, bool *success) {
-	if(!make_token(e)) {
-		*success = false;
-		return 0;
-	}
+static bool check_parentheses(int p, int q) {
+    if (tokens[p].type != '(' || tokens[q].type != ')') {
+        return false;
+    }
 
-	/* TODO: Insert codes to evaluate the expression. */
-	    if (nr_token == 1) {
-			if (tokens[0].type == REG) {
-			int i;
+    int balance = 0;
+    int i;
 
-			for (i = R_EAX; i <= R_EDI; i++) {
-				if (strcmp(tokens[0].str + 1, regsl[i]) == 0) {
-					*success = true;
-					return reg_l(i);
-				}
-			}
-
-			*success = false;
-			return 0;
-		}
-        if (tokens[0].type == HEX) {
-            *success = true;
-            return strtoul(tokens[0].str, NULL, 16);
+    for (i = p; i <= q; i++) {
+        if (tokens[i].type == '(') {
+            balance++;
+        } else if (tokens[i].type == ')') {
+            balance--;
+            if (balance == 0 && i < q) {
+                return false;
+            }
         }
 
-        if (tokens[0].type == NUM) {
-            *success = true;
-            return strtoul(tokens[0].str, NULL, 10);
+        if (balance < 0) {
+            return false;
         }
+    }
+
+    return balance == 0;
+}
+
+static uint32_t eval(int p, int q, bool *success) {
+    // 只有一个 token
+    if (p == q) {
+        if (tokens[p].type == NUM) {
+            return strtoul(tokens[p].str, NULL, 10);
+        }
+
+        if (tokens[p].type == HEX) {
+            return strtoul(tokens[p].str, NULL, 16);
+        }
+
+        if (tokens[p].type == REG) {
+            int i;
+
+            for (i = R_EAX; i <= R_EDI; i++) {
+                if (strcmp(tokens[p].str + 1, regsl[i]) == 0) {
+                    return reg_l(i);
+                }
+            }
+
+            *success = false;
+            return 0;
+        }
+
+        *success = false;
+        return 0;
+    }
+
+    // 整个表达式被一对括号包住
+    if (check_parentheses(p, q)) {
+        return eval(p + 1, q - 1, success);
+    }
+
+    // 找主运算符
+    int op = -1;
+    int balance = 0;
+    int i;
+
+    for (i = p; i <= q; i++) {
+        if (tokens[i].type == '(') {
+            balance++;
+        } else if (tokens[i].type == ')') {
+            balance--;
+        } else if (balance == 0) {
+            if (tokens[i].type == '+' ||
+                tokens[i].type == '-') {
+                op = i;
+            }
+        }
+    }
+
+    // 没找到 + 或 -
+    if (op == -1) {
+        *success = false;
+        return 0;
+    }
+
+    uint32_t val1 = eval(p, op - 1, success);
+    if (!*success) {
+        return 0;
+    }
+
+    uint32_t val2 = eval(op + 1, q, success);
+    if (!*success) {
+        return 0;
+    }
+
+    if (tokens[op].type == '+') {
+        return val1 + val2;
+    }
+
+    if (tokens[op].type == '-') {
+        return val1 - val2;
     }
 
     *success = false;
     return 0;
+}
+
+uint32_t expr(char *e, bool *success) {
+    if (!make_token(e)) {
+        *success = false;
+        return 0;
+    }
+
+    *success = true;
+
+    if (nr_token == 0) {
+        *success = false;
+        return 0;
+    }
+
+    return eval(0, nr_token - 1, success);
 }
 
