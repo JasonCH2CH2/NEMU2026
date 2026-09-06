@@ -59,13 +59,63 @@ static int cmd_info(char *args) {
     return 0;
 }
 
+static int cmd_x(char *args) {
+    int n;
+    char *expr_str;
+    bool success;
+    uint32_t addr;
+    int i;
+
+    if (args == NULL) {
+        printf("Usage: x N EXPR\n");
+        return 0;
+    }
+
+    n = atoi(args);
+
+    expr_str = strchr(args, ' ');
+    if (expr_str == NULL) {
+        printf("Usage: x N EXPR\n");
+        return 0;
+    }
+
+    while (*expr_str == ' ') {
+        expr_str++;
+    }
+
+    expr_str = strchr(expr_str, ' ');
+    if (expr_str == NULL) {
+        printf("Usage: x N EXPR\n");
+        return 0;
+    }
+
+    while (*expr_str == ' ') {
+        expr_str++;
+    }
+
+    addr = expr(expr_str, &success);
+
+    if (!success) {
+        printf("Bad expression.\n");
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("0x%08x: 0x%08x\n",
+               addr + i * 4,
+               swaddr_read(addr + i * 4, 4));
+    }
+
+    return 0;
+}
+
 static int cmd_q(char *args) {
 	return -1;
 }
 
 static int cmd_help(char *args);
 
-static struct {
+static struct {//注册表在这
 	char *name;
 	char *description;
 	int (*handler) (char *);
@@ -75,6 +125,7 @@ static struct {
 	{ "q", "Exit NEMU", cmd_q },
 	{ "si", "Step into N instructions", cmd_si },
 	{ "info", "Print information about the program", cmd_info },
+	{ "x", "Scan memory", cmd_x },
 
 	/* TODO: Add more commands */
 
