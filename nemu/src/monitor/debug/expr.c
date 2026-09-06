@@ -115,6 +115,8 @@ static bool make_token(char *e) {
 				case NEQ:
 				case AND:
 				case NOT:
+				case NEG:
+				case DEREF:
 				case '+':
 				case '-':
 				case '*':
