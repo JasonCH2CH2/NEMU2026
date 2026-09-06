@@ -296,8 +296,7 @@ static uint32_t eval(int p, int q, bool *success) {
             op = i;
         }
 
-        printf("DEBUG OP: p=%d q=%d i=%d type=%d prec=%d op=%d\n",
-       p, q, i, tokens[i].type, prec, op);
+
     }
 
     // 没找到二元运算符，说明可能是一元运算
