@@ -79,7 +79,7 @@ void free_wp(int NO) {
 }
 
 
-bool check_wp() {
+bool check_wp(swaddr_t eip) {
     WP *wp = head;
 
     while (wp != NULL) {
@@ -98,6 +98,7 @@ bool check_wp() {
             printf("Watchpoint %d triggered: %s\n", wp->NO, wp->expr);
             printf("Old value = 0x%08x\n", wp->old_value);
             printf("New value = 0x%08x\n", new_value);
+            printf("Hint watchpoint %d at address 0x%08x\n", wp->NO, eip);
 
             wp->old_value = new_value;
             return true;
