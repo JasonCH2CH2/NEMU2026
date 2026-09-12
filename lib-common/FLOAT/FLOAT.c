@@ -1,8 +1,10 @@
 #include "FLOAT.h"
+#include <string.h>
+#include <stdint.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-	nemu_assert(0);
-	return 0;
+        int64_t result = (int64_t)a * b;
+        return result >> 16;
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
@@ -24,8 +26,16 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * out another way to perform the division.
 	 */
 
-	nemu_assert(0);
-	return 0;
+    int32_t quotient, remainder;
+    int64_t dividend = (int64_t)a << 16;
+    
+    // 使用 x86 内联汇编执行 64位 / 32位 的除法
+    // "A" 约束会将 dividend 的低 32 位放入 eax，高 32 位放入 edx
+    asm volatile("idivl %2"
+                 : "=a"(quotient), "=d"(remainder)
+                 : "r"(b), "A"(dividend));
+                 
+    return quotient;
 }
 
 FLOAT f2F(float a) {
@@ -38,13 +48,27 @@ FLOAT f2F(float a) {
 	 * stack. How do you retrieve it to another variable without
 	 * performing arithmetic operations on it directly?
 	 */
+    uint32_t bits;
+    memcpy(&bits, &a, sizeof(bits));
+    int32_t exp = ((bits >> 23) & 0xff) - 127;
+    uint32_t frac = (bits & 0x7fffff) | 0x800000;
+    int32_t result;
 
-	nemu_assert(0);
-	return 0;
+    if (exp >= 0) {
+            result = (int32_t)(frac << exp) >> 7;
+    } else {
+            result = (int32_t)(frac >> (-exp)) >> 7;
+    }
+
+    if (bits >> 31) {
+            result = -result;
+    }
+
+    return result;
 }
 
 FLOAT Fabs(FLOAT a) {
-	nemu_assert(0);
+	return a < 0 ? -a : a;
 	return 0;
 }
 
