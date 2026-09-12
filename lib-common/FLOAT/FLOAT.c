@@ -1,5 +1,6 @@
 #include "FLOAT.h"
 #include <string.h>
+#include <stdint.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
         int64_t result = (int64_t)a * b;
@@ -24,8 +25,16 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * It is OK not to use the template above, but you should figure
 	 * out another way to perform the division.
 	 */
-    int64_t dividend = ((int64_t)a) << 16;
-    return dividend / b;
+    int32_t low = (uint32_t)a << 16;
+    int32_t high = a >> 16;
+    int32_t quotient;
+    int32_t remainder;
+
+    asm volatile ("idivl %4"
+                  : "=a"(quotient), "=d"(remainder)
+                  : "0"(low), "1"(high), "r"(b));
+
+    return quotient;
 }
 
 FLOAT f2F(float a) {
@@ -59,7 +68,6 @@ FLOAT f2F(float a) {
 
 FLOAT Fabs(FLOAT a) {
 	return a < 0 ? -a : a;
-	return 0;
 }
 
 /* Functions below are already implemented */
@@ -87,4 +95,3 @@ FLOAT pow(FLOAT x, FLOAT y) {
 
 	return t;
 }
-
