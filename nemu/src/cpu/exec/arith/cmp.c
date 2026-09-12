@@ -83,6 +83,8 @@ make_helper(cmp_rm2r_l) {
 make_helper(cmp_i2a_b) {
 	uint32_t imm = instr_fetch(eip + 1, 1);
 	uint32_t result = reg_b(R_AL) - imm;
+	fprintf(stderr, "CMP_I2A_B eip=%08x al=%02x imm=%02x zf=%d\n",
+			eip, reg_b(R_AL), imm, result == 0);
 	update_eflags_pf_zf_sf(result);
 
 	cpu.eflags.CF = reg_b(R_AL) < imm;
