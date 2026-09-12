@@ -66,3 +66,28 @@ make_helper(cmp_i2a_l) {
 
 	return 5;
 }
+
+make_helper(cmp_rm2r_l) {
+	int len = decode_rm2r_l(eip + 1);
+
+	uint32_t result = op_src->val - op_dest->val;
+	update_eflags_pf_zf_sf(result);
+
+	cpu.eflags.CF = op_src->val < op_dest->val;
+	cpu.eflags.OF = ((int32_t)op_src->val < 0) != ((int32_t)op_dest->val < 0)
+	              && ((int32_t)result < 0) != ((int32_t)op_src->val < 0);
+
+	return len + 1;
+}
+
+make_helper(cmp_i2a_b) {
+	uint32_t imm = instr_fetch(eip + 1, 1);
+	uint32_t result = reg_b(R_AL) - imm;
+	update_eflags_pf_zf_sf(result);
+
+	cpu.eflags.CF = reg_b(R_AL) < imm;
+	cpu.eflags.OF = ((int8_t)reg_b(R_AL) < 0) != ((int8_t)imm < 0)
+	              && ((int8_t)result < 0) != ((int8_t)reg_b(R_AL) < 0);
+
+	return 2;
+}
