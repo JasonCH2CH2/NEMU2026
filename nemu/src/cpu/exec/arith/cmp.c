@@ -24,7 +24,7 @@ make_helper(cmp_i2rm_l) {
     cpu.eflags.OF = ((int32_t)op_dest->val < 0) != ((int32_t)imm < 0)
                   && ((int32_t)result < 0) != ((int32_t)op_dest->val < 0);
 
-	return len + 5;
+	return len + 1;
 }
 
 make_helper(cmp_i2rm_b) {
@@ -38,7 +38,7 @@ make_helper(cmp_i2rm_b) {
 	cpu.eflags.OF = ((int32_t)op_dest->val < 0) != ((int32_t)imm < 0)
 	              && ((int32_t)result < 0) != ((int32_t)op_dest->val < 0);
 
-	return len + 2;
+	return len + 1;
 }
 
 make_helper(cmp_si2rm_l) {
@@ -52,7 +52,7 @@ make_helper(cmp_si2rm_l) {
 	cpu.eflags.OF = ((int32_t)op_dest->val < 0) != (imm < 0)
 	              && ((int32_t)result < 0) != ((int32_t)op_dest->val < 0);
 
-	return len + 2;
+	return len + 1;
 }
 
 make_helper(cmp_i2a_l) {
