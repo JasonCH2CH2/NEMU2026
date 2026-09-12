@@ -39,6 +39,7 @@
 
 #include "string/rep.h"
 #include "string/scas.h"
+#include "string/lods.h"
 #include "string/stos.h"
 #include "string/movs.h"
 

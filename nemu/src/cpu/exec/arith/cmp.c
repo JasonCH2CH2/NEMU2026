@@ -27,6 +27,19 @@ make_helper(cmp_i2rm_l) {
 	return len + 1;
 }
 
+make_helper(cmp_r2rm_b) {
+	int len = decode_r2rm_b(eip + 1);
+
+	uint32_t result = op_dest->val - op_src->val;
+	update_eflags_pf_zf_sf(result);
+
+	cpu.eflags.CF = op_dest->val < op_src->val;
+	cpu.eflags.OF = ((int8_t)op_dest->val < 0) != ((int8_t)op_src->val < 0)
+	              && ((int8_t)result < 0) != ((int8_t)op_dest->val < 0);
+
+	return len + 1;
+}
+
 make_helper(cmp_i2rm_b) {
 	int len = decode_i2rm_b(eip + 1);
 
