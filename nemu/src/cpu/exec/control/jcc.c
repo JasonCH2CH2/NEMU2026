@@ -25,8 +25,6 @@ static bool test_cc(int cc) {
 make_helper(jcc_b) {
 	int32_t offset = (int8_t)instr_fetch(eip + 1, 1);
 	int cc = ops_decoded.opcode & 0xf;
-	fprintf(stderr, "JCC_B eip=%08x cc=%x cf=%d zf=%d take=%d\n",
-			eip, cc, cpu.eflags.CF, cpu.eflags.ZF, test_cc(cc));
 	if(test_cc(cc)) {
 		cpu.eip += offset;
 	}
