@@ -44,6 +44,8 @@ make_helper(int_imm_b) {
 	uint8_t imm = instr_fetch(eip + 1, 1);
 
 	if(imm == 0x80 && cpu.eax == 4) {
+		fprintf(stderr, "INT80_WRITE fd=%d buf=%08x len=%d\n",
+				cpu.ebx, cpu.ecx, cpu.edx);
 		cpu.eax = cpu.edx;
 	}
 
