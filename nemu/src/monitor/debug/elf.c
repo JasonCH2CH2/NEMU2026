@@ -1,4 +1,5 @@
 #include "common.h"
+#include "monitor/expr.h"
 #include <stdlib.h>
 #include <elf.h>
 
@@ -81,3 +82,16 @@ void load_elf_tables(int argc, char *argv[]) {
 	fclose(fp);
 }
 
+bool get_symbol_addr(const char *name, uint32_t *addr) {
+	int i;
+
+	for(i = 0; i < nr_symtab_entry; i ++) {
+		if(ELF32_ST_TYPE(symtab[i].st_info) == STT_OBJECT &&
+		   strcmp(strtab + symtab[i].st_name, name) == 0) {
+			*addr = symtab[i].st_value;
+			return true;
+		}
+	}
+
+	return false;
+}

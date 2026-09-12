@@ -1,4 +1,5 @@
 #include "nemu.h"
+#include "monitor/expr.h"
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -18,6 +19,7 @@ enum {
     NUM,
     HEX,
     REG,
+    IDENT,
     NOT,
     NEG,
     DEREF
@@ -36,6 +38,7 @@ static struct rule {
 
     {"0[xX][0-9a-fA-F]+", HEX},
     {"\\$[a-zA-Z]+", REG},
+    {"[A-Za-z_][A-Za-z0-9_]*", IDENT},
     {"[0-9]+", NUM},
 
     {"==", EQ},
@@ -111,6 +114,7 @@ static bool make_token(char *e) {
 				case NUM:
 				case HEX:
 				case REG:
+				case IDENT:
 				case EQ:
 				case NEQ:
 				case AND:
@@ -233,6 +237,17 @@ static uint32_t eval(int p, int q, bool *success) {
                 if (strcmp(tokens[p].str + 1, regsl[i]) == 0) {
                     return reg_l(i);
                 }
+            }
+
+            *success = false;
+            return 0;
+        }
+
+        if (tokens[p].type == IDENT) {
+            uint32_t addr;
+
+            if (get_symbol_addr(tokens[p].str, &addr)) {
+                return addr;
             }
 
             *success = false;
@@ -408,4 +423,3 @@ uint32_t expr(char *e, bool *success) {
 
     return eval(0, nr_token - 1, success);
 }
-
