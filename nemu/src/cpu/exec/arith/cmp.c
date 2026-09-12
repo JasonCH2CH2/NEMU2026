@@ -70,17 +70,12 @@ make_helper(cmp_i2a_l) {
 make_helper(cmp_rm2r_l) {
 	int len = decode_rm2r_l(eip + 1);
 
-	uint32_t result = op_src->val - op_dest->val;
-	fprintf(stderr, "CMP_RM2R_L eip=%08x src=%08x dst=%08x zf=%d sf=%d of=%d cf=%d\n",
-			eip, op_src->val, op_dest->val, result == 0, result >> 31,
-			((int32_t)op_src->val < 0) != ((int32_t)op_dest->val < 0)
-			&& ((int32_t)result < 0) != ((int32_t)op_src->val < 0),
-			op_src->val < op_dest->val);
+	uint32_t result = op_dest->val - op_src->val;
 	update_eflags_pf_zf_sf(result);
 
-	cpu.eflags.CF = op_src->val < op_dest->val;
-	cpu.eflags.OF = ((int32_t)op_src->val < 0) != ((int32_t)op_dest->val < 0)
-	              && ((int32_t)result < 0) != ((int32_t)op_src->val < 0);
+	cpu.eflags.CF = op_dest->val < op_src->val;
+	cpu.eflags.OF = ((int32_t)op_dest->val < 0) != ((int32_t)op_src->val < 0)
+	              && ((int32_t)result < 0) != ((int32_t)op_dest->val < 0);
 
 	return len + 1;
 }

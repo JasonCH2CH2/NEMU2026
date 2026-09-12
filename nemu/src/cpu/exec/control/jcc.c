@@ -33,11 +33,7 @@ make_helper(jcc_b) {
 
 make_helper(jcc_l) {
 	int32_t offset = (int32_t)instr_fetch(eip + 1, 4);
-	int cc = ops_decoded.opcode & 0xf;
-	fprintf(stderr, "JCC_L eip=%08x cc=%x cf=%d zf=%d sf=%d of=%d take=%d\n",
-			eip, cc, cpu.eflags.CF, cpu.eflags.ZF, cpu.eflags.SF,
-			cpu.eflags.OF, test_cc(cc));
-	if(test_cc(cc)) {
+	if(test_cc(ops_decoded.opcode & 0xf)) {
 		cpu.eip += offset;
 	}
 	return 5;
