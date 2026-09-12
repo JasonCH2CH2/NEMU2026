@@ -24,5 +24,17 @@ make_helper(cmp_i2rm_l) {
     cpu.eflags.OF = ((int32_t)op_dest->val < 0) != ((int32_t)imm < 0)
                   && ((int32_t)result < 0) != ((int32_t)op_dest->val < 0);
 
-    return len + 5;
+	return len + 5;
+}
+
+make_helper(cmp_i2a_l) {
+	uint32_t imm = instr_fetch(eip + 1, 4);
+	uint32_t result = cpu.eax - imm;
+	update_eflags_pf_zf_sf(result);
+
+	cpu.eflags.CF = cpu.eax < imm;
+	cpu.eflags.OF = ((int32_t)cpu.eax < 0) != ((int32_t)imm < 0)
+	              && ((int32_t)result < 0) != ((int32_t)cpu.eax < 0);
+
+	return 5;
 }
