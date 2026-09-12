@@ -1,6 +1,5 @@
 #include "FLOAT.h"
 #include <string.h>
-#include <stdint.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
         int64_t result = (int64_t)a * b;
@@ -25,17 +24,8 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * It is OK not to use the template above, but you should figure
 	 * out another way to perform the division.
 	 */
-
-    int32_t quotient, remainder;
-    int64_t dividend = (int64_t)a << 16;
-    
-    // 使用 x86 内联汇编执行 64位 / 32位 的除法
-    // "A" 约束会将 dividend 的低 32 位放入 eax，高 32 位放入 edx
-    asm volatile("idivl %2"
-                 : "=a"(quotient), "=d"(remainder)
-                 : "r"(b), "A"(dividend));
-                 
-    return quotient;
+    int64_t dividend = ((int64_t)a) << 16;
+    return dividend / b;
 }
 
 FLOAT f2F(float a) {
