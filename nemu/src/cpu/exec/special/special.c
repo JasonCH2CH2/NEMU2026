@@ -40,3 +40,12 @@ make_helper(nemu_trap) {
 	return 1;
 }
 
+make_helper(int_imm_b) {
+	uint8_t imm = instr_fetch(eip + 1, 1);
+
+	if(imm == 0x80 && cpu.eax == 4) {
+		cpu.eax = cpu.edx;
+	}
+
+	return 2;
+}
