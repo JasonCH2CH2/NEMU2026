@@ -46,6 +46,8 @@ make_helper(cmp_si2rm_l) {
 
 	int32_t imm = (int32_t)op_src->val;
 	uint32_t result = op_dest->val - (uint32_t)imm;
+	fprintf(stderr, "CMP_SI2RM_L eip=%08x val=%08x imm=%08x zf=%d\n",
+			eip, op_dest->val, imm, result == 0);
 	update_eflags_pf_zf_sf(result);
 
 	cpu.eflags.CF = op_dest->val < (uint32_t)imm;
